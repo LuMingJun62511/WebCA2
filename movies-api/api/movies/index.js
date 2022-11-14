@@ -22,6 +22,7 @@ router.get('/:id', (req, res) => {
     }
 });
 
+// Get movie reviews
 router.get('/:id/reviews', (req, res) => {
     const id = parseInt(req.params.id);
     // find reviews in list
