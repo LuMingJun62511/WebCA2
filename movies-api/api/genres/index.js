@@ -13,3 +13,5 @@ router.get('/', async (req, res) => {
 });
 
 export default router;
+
+//这个就教会了我怎么从芒果里面取数据，那么初始的数据是怎么存进去的来着
