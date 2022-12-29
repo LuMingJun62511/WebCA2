@@ -1,46 +1,52 @@
 # Assignment 2 - Web API.
-
-Name: Yikun Fan
+Name: Yikun Fan 20099869
 
 ## Features.
-
-A bullet-point list of the ADDITIONAL features you have implemented in the API **THAT WERE NOT IN THE LABS** (or modifications to existing features)
-
- + Reviews user commented can be saved and fetched now
- + User can 
- + Feature 3 
- + etc
+ + Reviews that user commented can be saved and fetched now.
+ + User can view the movie they may be interested, those movies are shown based on the genres of user's favorite movies.
+ + Perviously, app can directly fetch data from tmdb api at the front end, now they are all updated.
+ + User can login, sign up.
+ + After login, each user can have their own favorite movie list, independent of everyone else's.
 
 ## Setup requirements.
-
-[ Outline any non-standard setup steps necessary to run your app locally after cloning the repo.]
+ + cd MyTMDB and install packages: npm install
+ + cd movies-api and install packages: npm install
+ + start movies-api and Open browser at: http://localhost:3000
 
 ## API Configuration
-
-Describe any configuration that needs to take place before running the API. For example, creating an `.env` file and what variables to put in it. Give an example of how this might be done.
-
-REMEMBER: DON'T PUT YOUR OWN USERNAMES/PASSWORDS/AUTH KEYS IN THE README OR ON GITHUB, just placeholders as indicated below:
-
+Please create a `.env` file in the movies-api, and here is the content:
 ______________________
-NODEENV=development
 PORT=8080
-HOST=
-mongoDB=YourMongoURL
-seedDb=true
-secret=YourJWTSecret
+HOST=localhost
+MONGO_DB=YourMongoURL
+SEED_DB=True
+SECRET=YourJWTSecret
+REACT_APP_TMDB_KEY=YourTmdbKey
 ______________________
 
 ## API Design
-[Swaggerhub](https://app.swaggerhub.com/apis/LuMingJun62511/TMDBtest1/1.0.0#/Device)).
+[Swaggerhub](https://app.swaggerhub.com/apis/LuMingJun62511/TMDBtest1/1.0.0#/Device).
 
 ## Security and Authentication
+The api about movies and genres are protected, and those are implemented using JWT strategy.
+The following routes are protected 
++ /reviews/form
++ /reviews/:id
++ /movies/favorites
++ /movies/:id
++ /movies/upcoming
++ /movies/interesting
 
-Give details of authentication/security implemented on the API (e.g. passport/sessions). Indicate which routes are protected.
 
 ## Integrating with React App
-
-Describe how you integrated your React app with the API. List the views that use your Web API instead of the TMDB API. Describe any other updates to the React app from Assignment One.
++ /reviews/form
+In this view, user can post their reviews to the database, the review must not contain some bad words
++ /reviews/:id
+In this view, user can get reviews not only from tmdb api, but also from database, those reviews are user commented
++ /movies/favorites
+In this view, user can get their favorites movies from database, those favorites movies are chosen by users at the main page, and posted to database
++ /movies/interesting
+In this view, user can view the movie they may be interested, those movies are shown based on the genres of user's favorite movies.
 
 ## Independent learning (if relevant)
-
-Briefly explain any non-standard features developed for the app.
+I learned the basic operation of the mongoDB, like create a object and insert it into a schema, by using this, I can store the reviews user commented 
