@@ -1,18 +1,14 @@
 import express from 'express';
 import User from './userModel';
+import Reviews from './reviewsModel';
 import asyncHandler from 'express-async-handler';
 import jwt from 'jsonwebtoken';
-import movieModel from '../movies/movieModel';
+import { getMovie } from '../tmdb-api';
 
 const router = express.Router(); // eslint-disable-line
 const regex = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,}$/);
-// Get all users
-router.get('/', async (req, res) => {
-  const users = await User.find();
-  res.status(200).json(users);
-});
+const regex2 = new RegExp(/(shit|fuck|faggot)/);
 
-// Register OR authenticate a user
 router.post('/', asyncHandler(async (req, res, next) => {
   if (!req.body.username || !req.body.password) {
     res.status(401).json({ success: false, msg: 'Please pass username and password.' });
@@ -41,32 +37,80 @@ router.post('/', asyncHandler(async (req, res, next) => {
   }
 }));
 
+//13 把用户的评论存起来
+router.post('/movieReviews/:id', asyncHandler(async (req, res, next) => {
+  if (regex2.test(req.body.content)) {//如果评论有问题
+    res.status(401).json({ success: false, msg: 'Bad Content' });
+    console.log(req.body.content)
+    console.log("评论有问题，下面不执行")
+    return next();
+  } else {
+    console.log("评论没问题，这里才执行")
+    console.log(req.body)
+    Reviews.create({
+      id: req.body.id,
+      movieId: req.body.movieId,
+      author: req.body.author,
+      rating: req.body.rating,
+      content: req.body.content
+    });
+    res.status(201).json(req.body);
+  }
+}));
 
+//15
 router.get('/:userName/favourites', asyncHandler(async (req, res) => {
   const userName = req.params.userName;
   const user = await User.findByUserName(userName).populate('favourites');
   res.status(200).json(user.favourites);
 }));
 
-//Add a favourite. No Error Handling Yet. Can add duplicates too!
+//15
 router.post('/:userName/favourites', asyncHandler(async (req, res) => {
   const newFavourite = req.body.id;
   const userName = req.params.userName;
-  const movie = await movieModel.findByMovieDBId(newFavourite);
   const user = await User.findByUserName(userName);
   if (!user.favourites) {//一开始为空
-    await user.favourites.push(movie._id);
+    await user.favourites.push(newFavourite);
     await user.save();
     res.status(201).json(user);
-  } else if (!user.favourites.includes(movie._id)) {//不空也包含
-    await user.favourites.push(movie._id);
+  } else if (!user.favourites.includes(newFavourite)) {//不空且不包含
+    await user.favourites.push(newFavourite);
     await user.save();
     res.status(201).json(user);
   } else {
     res.status(401).json({ code: 401, msg: 'Duplicate favo' });
   }
-
 }));
+
+//15
+router.post('/:userName/favourites/delete', asyncHandler(async (req, res) => {
+  const toBeDeleted = req.body.id;
+  const userName = req.params.userName;
+  const user = await User.findByUserName(userName);
+  if (!user.favourites.includes(toBeDeleted)) {
+    res.status(401).json({ code: 401, msg: 'do not have' });
+  } else {
+    await user.favourites.pop(toBeDeleted);
+    await user.save();
+    res.status(201).json(user);
+  }
+}));
+
+//16
+router.get('/:userName/interestedGenres', asyncHandler(async (req, res) => {
+  const userName = req.params.userName;
+  const user = await User.findByUserName(userName).populate('favourites');
+  let result = [];
+  const userFavo = user.favourites;
+  for (let i = 0; i < userFavo.length; i++) {
+    await getMovie(userFavo[i]).then((res) => {
+      result = [].concat(result, res.genres)
+    })
+  }
+  res.status(200).json(result);
+}));
+
 
 // Update a user
 router.put('/:id', async (req, res) => {

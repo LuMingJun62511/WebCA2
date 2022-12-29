@@ -6,7 +6,8 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
   username: { type: String, unique: true, required: true },
   password: { type: String, required: true },
-  favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movies' }]
+  favourites:[{type:Number}],
+  mustWatch: [{type:Number}]
 });
 
 UserSchema.statics.findByUserName = function (username) {
@@ -20,11 +21,6 @@ UserSchema.methods.comparePassword = function (passw, callback) {
     }
     callback(null, isMatch);
   });
-};
-
-UserSchema.methods.findFavoById = function (movie) {
-  return this.findOne({ favourites: movie });
-  //这条技术路径走不通，不知道为什么
 };
 
 
