@@ -39,17 +39,14 @@ router.post('/', asyncHandler(async (req, res, next) => {
 
 //13 把用户的评论存起来
 router.post('/movieReviews/:id', asyncHandler(async (req, res, next) => {
+  const movieId = parseInt(req.params.id);
   if (regex2.test(req.body.content)) {//如果评论有问题
     res.status(401).json({ success: false, msg: 'Bad Content' });
-    console.log(req.body.content)
-    console.log("评论有问题，下面不执行")
     return next();
   } else {
-    console.log("评论没问题，这里才执行")
-    console.log(req.body)
     Reviews.create({
       id: req.body.id,
-      movieId: req.body.movieId,
+      movieId: movieId,
       author: req.body.author,
       rating: req.body.rating,
       content: req.body.content

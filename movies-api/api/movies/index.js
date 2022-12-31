@@ -4,6 +4,7 @@ import asyncHandler from 'express-async-handler';
 import { getUpcomingMovies, getMovieImages, getMovie, getMovies, getMovieCredits, getMovieReviews } from '../tmdb-api';
 
 const router = express.Router();
+const regex = new RegExp(/([1-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1-9][0-9][0-9][0-9][0-9]|[1-9][0-9][0-9][0-9][0-9][0-9]|[1-9][0-9][0-9][0-9][0-9][0-9][0-9]|[1-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9])/);
 
 //1
 router.get('/tmdb/upcoming', asyncHandler(async (req, res) => {
@@ -20,8 +21,12 @@ router.get('/tmdb/upcoming', asyncHandler(async (req, res) => {
 //3
 router.get('/tmdb/movieImgs/:id', asyncHandler(async (req, res) => {
     const id = parseInt(req.params.id);
-    const movieImgs = await getMovieImages(id);
-    res.status(200).json(movieImgs);
+    if (regex.test(id)) {
+        const movieImgs = await getMovieImages(id);
+        res.status(200).json(movieImgs);
+    } else {
+        res.status(404).json({ success: false, msg: 'invalid id' });
+    }
 }));
 
 //7
