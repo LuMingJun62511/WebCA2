@@ -48,5 +48,5 @@ In this view, user can get their favorites movies from database, those favorites
 + /movies/interesting  
 In this view, user can view the movie they may be interested, those movies are shown based on the genres of user's favorite movies.
 
-## Independent learning (if relevant)
+## Independent learning
 I learned the basic operation of the mongoDB, like create a object and insert it into a schema, by using this, I can store the reviews user commented 
